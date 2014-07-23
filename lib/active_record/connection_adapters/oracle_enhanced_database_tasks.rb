@@ -25,6 +25,10 @@ module ActiveRecord
           connection.execute "GRANT create session TO #{@config['username']}"
           connection.execute "GRANT create table TO #{@config['username']}"
           connection.execute "GRANT create sequence TO #{@config['username']}"
+          connection.execute "GRANT create synonym TO #{@config['username']}"
+          connection.execute "GRANT create trigger TO #{@config['username']}"
+          connection.execute "GRANT create procedure TO #{@config['username']}"
+          connection.execute "GRANT create view TO #{@config['username']}"
         end
 
         def drop
