@@ -29,6 +29,7 @@ module ActiveRecord
           connection.execute "GRANT create trigger TO #{@config['username']}"
           connection.execute "GRANT create procedure TO #{@config['username']}"
           connection.execute "GRANT create view TO #{@config['username']}"
+          connection.execute "GRANT create any index TO #{@config['username']}"
         end
 
         def drop
