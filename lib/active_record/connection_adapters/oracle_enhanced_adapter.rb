@@ -440,7 +440,7 @@ module ActiveRecord
         :nls_dual_currency       => nil,
         :nls_iso_currency        => nil,
         :nls_language            => nil,
-        :nls_length_semantics    => 'CHAR',
+        :nls_length_semantics    => 'BYTE',
         :nls_nchar_conv_excp     => nil,
         :nls_numeric_characters  => nil,
         :nls_sort                => nil,
