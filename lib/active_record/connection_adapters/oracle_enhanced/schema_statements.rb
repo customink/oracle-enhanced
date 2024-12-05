@@ -192,9 +192,12 @@ module ActiveRecord
         #     t.string      :last_name, :comment => “Surname”
         #   end
 
-        def create_table(table_name, comment: nil, **options)
+        # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
+        def create_table(table_name, **options)
           create_sequence = options[:id] != false
-          td = create_table_definition table_name, options[:temporary], options[:options], options[:as], options[:tablespace], options[:organization], comment: comment
+          td = create_table_definition(
+            table_name, **options.extract!(:temporary, :options, :as, :comment, :tablespace, :organization)
+          )
 
           if options[:id] != false && !options[:as]
             pk = options.fetch(:primary_key) do
@@ -212,15 +215,18 @@ module ActiveRecord
           unless create_sequence
             class << td
               attr_accessor :create_sequence
+
+              # rubocop:disable Style/ArgumentsForwarding
               def primary_key(*args)
                 self.create_sequence = true
-                super(*args)
+                super
               end
+              # rubocop:enable Style/ArgumentsForwarding
             end
           end
 
           yield td if block_given?
-          create_sequence = create_sequence || td.create_sequence
+          create_sequence ||= td.create_sequence
 
           if options[:force] && data_source_exists?(table_name)
             drop_table(table_name, options)
@@ -231,7 +237,7 @@ module ActiveRecord
           create_sequence_and_trigger(table_name, options) if create_sequence
 
           if supports_comments? && !supports_comments_in_create?
-            change_table_comment(table_name, comment) if comment
+            change_table_comment(table_name, comment) if options[:comment]
             td.columns.each do |column|
               change_column_comment(table_name, column.name, column.comment) if column.comment.present?
             end
@@ -240,6 +246,7 @@ module ActiveRecord
 
           rebuild_primary_key_index_to_default_tablespace(table_name, options)
         end
+        # rubocop:enable Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
 
         def rename_table(table_name, new_name) #:nodoc:
           if new_name.to_s.length > table_name_length
@@ -594,7 +601,7 @@ module ActiveRecord
         end
 
         def create_alter_table(name)
-          OracleEnhanced::AlterTable.new create_table_definition(name, false, {})
+          OracleEnhanced::AlterTable.new create_table_definition(name)
         end
 
         def update_table_definition(table_name, base)

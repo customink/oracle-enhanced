@@ -53,11 +53,23 @@ module ActiveRecord
         include OracleEnhanced::ColumnMethods
 
         attr_accessor :tablespace, :organization
-        def initialize(name, temporary = false, options = nil, as = nil, tablespace = nil, organization = nil, comment: nil)
+
+        # rubocop:disable Metrics/ParameterLists
+        def initialize(
+          name,
+          temporary: false,
+          options: nil,
+          as: nil,
+          tablespace: nil,
+          organization: nil,
+          comment: nil,
+          **
+        )
           @tablespace = tablespace
           @organization = organization
           super(name, temporary, options, as, comment: comment)
         end
+        # rubocop:enable Metrics/ParameterLists
 
         def new_column_definition(name, type, **options) # :nodoc:
           if type == :virtual
