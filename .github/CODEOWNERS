@@ -1,0 +1,7 @@
+# GitHub CODEOWNERS
+#
+# For no pull request should be made without approval of the people responsible for the ktool implementation.
+# This hopefully will prevent breaking changes from being merged down more often.
+#
+# Default Code Owners for any change
+*   @customink/dx
